@@ -1,2 +1,9 @@
+amqp==2.3.2
+billiard==3.5.0.4
+celery==4.2.1
 Django==2.1.2
+django-celery-beat==1.1.1
+django-celery-results==1.0.1
+kombu==4.2.1
 pytz==2018.5
+vine==1.1.4

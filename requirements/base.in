@@ -1,1 +1,4 @@
 Django
+celery
+django-celery-beat
+django-celery-results
