@@ -1,0 +1,15 @@
+Hello, world. You're at the polls index. There are currently <strong>{{questions_count|default:"(pending)"}}</strong> questions.
+{% if not questions_count %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+function update() {
+    $.get("{% url 'check' task_id %}", function(data) {
+        if (data.questions_count !== null) {
+            return $("strong").text(data.questions_count);
+        }
+        setTimeout(update, 1000);
+    });
+};
+setTimeout(update, 1000);
+</script>
+{% endif %}
