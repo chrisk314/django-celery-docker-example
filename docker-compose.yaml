@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    networks:
+      - main
+    ports:
+      - "5672:5672"
+    restart: on-failure
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - main
+    ports:
+      - "5432:5432"
+    restart: on-failure
+
+  app:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0:8000"
+    container_name: app
+    depends_on:
+      - postgres
+      - rabbitmq
+    hostname: app
+    image: app-image
+    networks:
+      - main
+    ports:
+      - "8000:8000"
+    restart: on-failure
+
+  celery_worker:
+    command: celery -A mysite worker -l info
+    container_name: celery_worker
+    depends_on:
+      - app
+      - postgres
+      - rabbitmq
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+    hostname: celery_worker
+    image: app-image
+    networks:
+      - main
+    restart: on-failure
+
+  celery_beat:
+    command: celery -A mysite beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    container_name: celery_beat
+    depends_on:
+      - app
+      - postgres
+      - rabbitmq
+    hostname: celery_beat
+    image: app-image
+    networks:
+      - main
+    restart: on-failure
+
+networks:
+  main:

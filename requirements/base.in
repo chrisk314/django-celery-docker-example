@@ -2,3 +2,4 @@ Django
 celery
 django-celery-beat
 django-celery-results
+psycopg2
