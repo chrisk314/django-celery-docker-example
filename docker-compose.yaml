@@ -28,18 +28,34 @@ services:
 
   app:
     build: .
-    command: sh -c "python manage.py migrate && python manage.py runserver 0:8000"
+    command: sh -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn mysite.wsgi -b 0.0.0.0:8000"
     container_name: app
     depends_on:
       - postgres
       - rabbitmq
+    expose:
+      - "8000"
     hostname: app
     image: app-image
     networks:
       - main
-    ports:
-      - "8000:8000"
     restart: on-failure
+    volumes:
+      - static:/static
+
+  nginx:
+    container_name: nginx
+    depends_on:
+      - app
+    image: nginx:latest
+    networks:
+      - main
+    ports:
+      - "80:80"
+    restart: on-failure
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf
+      - static:/var/www/app/static
 
   celery_worker:
     command: celery -A mysite worker -l info
@@ -80,3 +96,6 @@ services:
 
 networks:
   main:
+
+volumes:
+  static:

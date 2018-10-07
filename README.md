@@ -1,6 +1,6 @@
 # Django Celery Docker Example
-This is a minimal example demonstrating how to set up the components of a Django app with Celery
-workers using Docker.
+This is a minimal example demonstrating how to set up the components of a Django app behind an Nginx
+proxy with Celery workers using Docker.
 
 ## Install
 

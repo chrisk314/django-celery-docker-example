@@ -27,7 +27,7 @@ SECRET_KEY = '=#+sttn&auyxnqins-zvm@eql6s9z+riv*@5ipyw)5z1oszzvg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['app']
 
 
 # Application definition
@@ -127,6 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/static'
 
 
 # Celery config
