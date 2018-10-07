@@ -7,6 +7,7 @@ RUN apk update && apk add --virtual .build-deps gcc python3-dev musl-dev postgre
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . .
+RUN mv wait-for /bin/wait-for
 
 RUN pip install --no-cache-dir -r requirements.txt
 
