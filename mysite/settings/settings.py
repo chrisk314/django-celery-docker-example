@@ -27,8 +27,9 @@ SECRET_KEY = '=#+sttn&auyxnqins-zvm@eql6s9z+riv*@5ipyw)5z1oszzvg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'app']
+ALLOWED_HOSTS = ['localhost']
 
+PRODUCTION = False
 
 # Application definition
 
@@ -128,7 +129,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static'
-
 
 # Celery config
 CELERY_BROKER_URL= 'pyamqp://rabbitmq:5672'

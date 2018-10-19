@@ -3,6 +3,9 @@ version: '3.4'
 services:
 
   app:
+    environment:
+      - DJANGO_SETTINGS_MODULE=mysite.settings.production
+      - SECRET_KEY
     volumes:
       - static:/static
 
