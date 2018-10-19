@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+
+  app:
+    volumes:
+      - static:/static
+
+  nginx:
+    container_name: nginx
+    command: wait-for app:8000 -- nginx -g "daemon off;"
+    depends_on:
+      - app
+    image: nginx:alpine
+    networks:
+      - main
+    ports:
+      - "80:80"
+    restart: on-failure
+    volumes:
+      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf
+      - ${PWD}/wait-for:/bin/wait-for
+      - static:/var/www/app/static
+
+volumes:
+  static:
