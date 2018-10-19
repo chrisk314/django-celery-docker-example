@@ -25,6 +25,8 @@ services:
     ports:
       - "5432:5432"
     restart: on-failure
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
 
   app:
     build: .
@@ -101,3 +103,4 @@ networks:
 
 volumes:
   static:
+  postgresql-data:
