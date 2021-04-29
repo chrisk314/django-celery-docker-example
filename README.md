@@ -1,6 +1,13 @@
 # Django Celery Docker Example
+
 This is a minimal example demonstrating how to set up the components of a Django app behind an Nginx
 proxy with Celery workers using Docker.
+
+## This repo is now archived
+Seems like this repo still attracts a lot of views despite being very old! I am not maintaining this
+repo. It was originally created as an example to illustrate some basic docker concepts to colleagues.
+Some of the details are probably out of date by now. I no longer use Django. FastAPI or Golang is my
+go to these days.
 
 ## Install
 
@@ -15,7 +22,7 @@ python3 -m pip install -U pip && python3 -m pip install -r requirements.txt
 ## Run
 
 To run the app, `docker` and `docker-compose` must be installed on your system. For installation
-instructions refer to the Docker [docs](https://docs.docker.com/compose/install/). 
+instructions refer to the Docker [docs](https://docs.docker.com/compose/install/).
 
 #### Compose
 The app can be run in development mode using Django's built in web server simply by executing
@@ -60,7 +67,7 @@ docker swarm leave --force
 
 ## Description
 
-The setup here defines distinct development and production environments for the app. Running 
+The setup here defines distinct development and production environments for the app. Running
 the app using Django's built in web server with `DEBUG=True` allows for quick and easy development;
 however, relying on Django's web server in a production environment is discouraged in the Django
 [docs](https://docs.djangoproject.com/en/2.1/ref/django-admin/#runserver) for security reasons.
@@ -73,7 +80,7 @@ Docker compose files allow the specification of complex configurations of multip
 services to be run together as a cluster of docker containers. Consult the excellent docker-compose
 [reference](https://docs.docker.com/compose/compose-file/) to learn about the many different
 configurable settings. Compose files are written in [`.yaml`](http://yaml.org/) format and feature three
-top level keys: services, volumes, and networks. Each service in the services section defines a 
+top level keys: services, volumes, and networks. Each service in the services section defines a
 separate docker container with a configuration which is independent of other services.
 
 ##### base compose
@@ -217,7 +224,7 @@ To persist the database tables used by the `app` service between successive invo
 keyword. The volume `postgresql-data` is defined in the `volumes` section with the default options.
 This means that Docker will automatically create and manage this persistent volume within the Docker
 area of the host filesystem.
- 
+
 ```YAML
 services:
   postgres:
@@ -421,7 +428,7 @@ python manage.py runserver 0:8000
 To ensure that the Django app does not block due to serial execution of long running tasks, celery
 workers are used. Celery provides a pool of worker processes to which cpu heavy or long
 running io tasks can be deferred in the form of asynchronous _tasks_. Many good guides exist which
-explain how to set up Celery such as [this one](https://www.revsys.com/tidbits/celery-and-django-and-docker-oh-my/). 
+explain how to set up Celery such as [this one](https://www.revsys.com/tidbits/celery-and-django-and-docker-oh-my/).
 Whilst it can seem overwhelming at first it's actually quite straightforward once it's been set up once.
 
 Firstly, the Celery app needs to be defined in [`mysite/celery_app.py`](./mysite/celery_app.py),
@@ -461,10 +468,10 @@ CELERY_BEAT_SCHEDULE = {
 }
 ```
 
-The message broker is specified using the `rabbitmq` service hostname which can be resolved by 
-any service on the `main` network. The Django app's database, i.e., the `postgres` service, will 
-be used as the Celery result backend. Periodic tasks to be scheduled by the `celery_beat` service 
-are also defined here. In this case, there is a single periodic task, `polls.tasks.query_every_five_mins`, 
+The message broker is specified using the `rabbitmq` service hostname which can be resolved by
+any service on the `main` network. The Django app's database, i.e., the `postgres` service, will
+be used as the Celery result backend. Periodic tasks to be scheduled by the `celery_beat` service
+are also defined here. In this case, there is a single periodic task, `polls.tasks.query_every_five_mins`,
 which will be executed every 5 minutes as specified by the crontab.
 
 The Celery app must be added in to the Django module's `__all__` variable in `mysite/__init__.py`
@@ -478,8 +485,8 @@ from .celery_app import app as celery_app
 __all__ = ('celery_app',)
 ```
 
-Finally, [tasks](http://docs.celeryproject.org/en/latest/userguide/tasks.html) to be 
-executed by the workers can be defined within each app of the Django project, 
+Finally, [tasks](http://docs.celeryproject.org/en/latest/userguide/tasks.html) to be
+executed by the workers can be defined within each app of the Django project,
 usually in files named `tasks.py` by convention. The [`polls/tasks.py`](./polls/tasks.py) file
 contains the following (very contrived!) tasks
 
@@ -551,9 +558,9 @@ docker-compose up --scale celery_worker=4
 
 &nbsp;
 ### Nginx
-In production, Nginx should be used as the web server for the app, passing requests to 
+In production, Nginx should be used as the web server for the app, passing requests to
 gunicorn which in turn interacts with the app via the app's Web Server Gateway Interface (WSGI).
-This great [guide](https://www.codementor.io/samueljames/nginx-setting-up-a-simple-proxy-server-using-docker-and-python-django-f7hy4e6jv) 
+This great [guide](https://www.codementor.io/samueljames/nginx-setting-up-a-simple-proxy-server-using-docker-and-python-django-f7hy4e6jv)
 explains setting up Nginx+gunicorn+Django in a Docker environment.
 
 In production, the following command is executed by the `app` service to run the `gunicorn` web
@@ -568,7 +575,7 @@ wait-for postgres:5432\
   && gunicorn mysite.wsgi -b 0.0.0.0:8000
 ```
 
-To successfully run the `app` service's production command, `gunicorn` must 
+To successfully run the `app` service's production command, `gunicorn` must
 be added to the project's requirements in `requirements/production.in`. It is the packages installed
 using this requirements file which are frozen (`python -m pip freeze > requirements.txt`) in to the
 top level `requirements.txt` file used by the `Dockerfile` to install the Python dependencies for
@@ -588,7 +595,7 @@ the [`nginx.conf`](./nginx.conf) file shown below which is bind mounted into the
 `/etc/nginx/nginx.conf`.
 
 ```conf
-# nginx.conf 
+# nginx.conf
 
 user  nginx;
 worker_processes  1;
@@ -618,7 +625,7 @@ http {
     listen 80;
     server_name localhost;
     charset utf-8;
-    
+
     location /static/ {
       autoindex on;
       alias /var/www/app/static/;
@@ -709,7 +716,7 @@ issues are eliminated by the use of virtual environments using
 considered best practice to only include dependencies in your project's environment which are
 required; however, it's also often convenient to have additional packages available which help to
 make the development process more smooth/efficient. To this end it is possible to create multiple
-virtual environments which leverage inheritance and to split the dependencies into multiple 
+virtual environments which leverage inheritance and to split the dependencies into multiple
 requirements files which can also make use of inheritance.
 
 This project makes use of separate requirements files for each different environment:
