@@ -8,7 +8,7 @@ proxy with Celery workers using Docker.
 git clone git@github.com:chrisk314/django-celery-docker-example.git
 cd django-celery-docker-example
 virtualenv -p python3 venv
-. .env
+export SECRET_KEY=app-secret-key
 python -m pip install -r requirements.txt
 ```
 
