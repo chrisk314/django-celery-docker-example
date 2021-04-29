@@ -15,6 +15,7 @@ go to these days.
 git clone git@github.com:chrisk314/django-celery-docker-example.git
 cd django-celery-docker-example
 virtualenv -p python3 venv
+source venv/bin/activate
 export SECRET_KEY=app-secret-key
 python3 -m pip install -U pip && python3 -m pip install -r requirements.txt
 ```
